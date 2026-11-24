@@ -3,14 +3,27 @@ import pytest
 from aqi import kategori_pm25
 
 
-@pytest.mark.parametrize("nilai, harapan", [
-    (10, "baik"), (15.5, "baik"), (40, "sedang"),
-    (100, "tidak sehat"), (200, "sangat tidak sehat"),
-])
-def test_kategori(nilai, harapan):
-    assert kategori_pm25(nilai) == harapan
+@pytest.mark.parametrize(
+    ("nilai", "expected"),
+    [
+        (0, "baik"),
+        (10, "baik"),
+        (15.5, "baik"),
+        (15.6, "sedang"),
+        (30, "sedang"),
+        (55.4, "sedang"),
+        (55.5, "tidak sehat"),
+        (100, "tidak sehat"),
+        (150.4, "tidak sehat"),
+        (150.5, "sangat tidak sehat"),
+        (200, "sangat tidak sehat"),
+    ],
+)
+def test_kategori_pm25(nilai, expected):
+    assert kategori_pm25(nilai) == expected
 
 
-def test_negatif_ditolak():
-    with pytest.raises(ValueError):
-        kategori_pm25(-1)
+@pytest.mark.parametrize("nilai", [-0.1, -1, -100])
+def test_pm25_negatif_menghasilkan_value_error(nilai):
+    with pytest.raises(ValueError, match="PM2.5 tidak boleh negatif"):
+        kategori_pm25(nilai)
