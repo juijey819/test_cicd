@@ -1,8 +1,9 @@
 
-import azure.functions as func
-import logging
 import json
+import logging
 import math
+
+import azure.functions as func
 
 from aqi import kategori_pm25
 
@@ -10,11 +11,13 @@ app = func.FunctionApp(
     http_auth_level=func.AuthLevel.ANONYMOUS
 )
 
+logger = logging.getLogger(__name__)
+
 
 @app.route(route="kategori", methods=["GET", "POST"])
 def kategori(req: func.HttpRequest) -> func.HttpResponse:
 
-    logging.info("PM2.5 classification request received.")
+    logger.info("PM2.5 classification request received.")
 
     # 1. Ambil parameter dari URL
     pm25_input = req.params.get("pm25")
